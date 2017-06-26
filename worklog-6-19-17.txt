@@ -1,0 +1,30 @@
+6-19-17
+10am Morning Meeting
+11am Set up programs
+12pm Lunch
+1pm exporing how to use R/mySQL
+2pm SQL tutorial
+2:30pm Massage excel data & import into SQL
+3:30pm Import data into RStudio
+4pm Begin drafting demographics work
+4:30pm leave
+
+6-21-17
+9am Arrive/try to get parking worked out
+10am Scrum
+10:30am Work on demographics
+11:30am Format excel spreadsheets
+12pm lunch
+1pm format excel spreadsheets
+2pm practice R & run comparisons
+4:pm leave
+
+6-22-17
+
+6-26-17
+9am Get parking pass
+9:30am Work on R script
+12:15pm Lunch
+1:15pm Work on R script
+3:30pm get unity ID
+4:30pm leave
