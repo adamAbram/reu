@@ -56,3 +56,21 @@ testChangeM <- function(dset1,dset2,range){
     }
     return (temp)
 }
+
+#For a paired t-test, if your dataset has both the before and after values, put it in as both dset1 and dset2. pair = true
+#range should be a matrix with indexes in column one corresponding to index in column two (e.g. range[1,1] is pre-Q1 and range [1,2] is post-Q1)
+
+massTTestM <- function(dset1,dset2,range, pair = FALSE){
+	#Create output matrix
+    temp = matrix (nrow = 3, ncol = length(range[,1]))
+    dimnames(temp) = list(c("t", "p","df"), colnames(dset1[range[,1]]))
+    #extract relavant data from test for each index
+    for(i in 1:length(range[,1])){
+        output = t.test(dset1[,range[i,1]], dset2[,range[i,2]], paired = pair)
+        temp[1,i] = output$statistic
+        temp[2,i] = output$p.value
+        temp[3,i] = output$parameter
+    }
+    return (temp)
+}
+#Use fisher's test measuring the difference between soft drops in 15 and in 16
