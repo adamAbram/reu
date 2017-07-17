@@ -81,7 +81,12 @@ tallyResponse <- function(matrix,range,numBins, label){
     colnames(output) = label[1:ncol(output)]
     for(i in range){
         temp = cut(matrix[,i],0:numBins)
-        output = rbind(output, summary(temp))
+        if(length(summary(temp)) < 6){
+        	output = rbind(output, c(summary(temp),0))
+        }else{
+        		output = rbind(output, summary(temp))
+        }
+        
     }
     output = output[-1,]
     rownames(output) = colnames(matrix[,range])
@@ -95,6 +100,9 @@ percentTally <- function(matrix,range,numBins,label){
     colnames(output) = label[1:ncol(output)]
     for(i in range){
         temp = summary(cut(matrix[,i],0:numBins))
+        if(length(temp) < 6){
+        	temp=c(temp,0)
+        }
         temptot = temp/(sum(temp) - temp[length(temp)])
         temptot = temptot[-(length(temptot))]
         output = rbind(output, temptot)
@@ -115,4 +123,20 @@ factor = cut((matrix[,column"#"]),number of bins, labels = vector of labels)
 
 #Poster: Report findings (what was significant, what were we measuring (dfw) what groups showed what tendencies)
 
-#ToDo: Now that I've gotten a list of indexes for each demographic, find a way to run the wilcox test on just those indices.
+#ToDone: Now that I've gotten a list of indexes for each demographic, find a way to run the wilcox test on just those indices. (f15gradesM[asian15,] gives the right input data)
+
+#Runs Chi-Square test on 2 matricies, in columns specified in range (vector). outputs X-squared, P value and degrees of freedom.
+compareSurvey <- function(matx1,matx2,range){
+    output = matrix(ncol = 3, nrow = length(range))
+    colnames(output) = c("X-square", "p","df")
+    for(i in 1:length(range)){
+        temp = rbind(matx1[range[i],],matx2[range[i],])
+        result = chisq.test(temp)
+        temp2 = c(result$statistic,result$p.value,result$parameter)
+        output[i,1] = result$statistic
+        output[i,2] =result$p.value
+        output[i,3] =result$parameter
+    }
+    rownames(output) = rownames(matx1[range,])
+    return(output)
+}
