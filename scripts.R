@@ -5,31 +5,32 @@
 #returns a named matrix with w and p values, as well as "improvement"
 #"Improvement" is positive if matx2 mean > matx1, zero if the same, negative otherwise
 testChangeV <- function(matx1,matx2,range){
-	temp = matrix (nrow = 3, ncol = length(range))
-	i = 1
-	dimnames(temp) = list(c("W", "p","improvement"), colnames(matx1[range]))
-	for(col in range){
-		output = wilcox.test(matx1[,col], matx2[,col])
-		temp[1,i] = output$statistic
-		temp[2,i] = output$p.value
-		temp[3,i] = .05<output$p.value
-		if(mean(matx1[,col])>mean(matx2[,col])){
-        	temp[3,i] = -1;
+    temp = matrix (nrow = 3, ncol = length(range))
+    i = 1
+    dimnames(temp) = list(c("W", "p","improvement"), colnames(matx1[,range]))
+    for(col in range){
+        output = wilcox.test(matx1[,col], matx2[,col])
+        temp[1,i] = output$statistic
+        temp[2,i] = output$p.value
+        temp[3,i] = .05<output$p.value
+        if(mean(matx1[,col])>mean(matx2[,col])){
+            temp[3,i] = -1;
         }
         else
         {
-        	if(mean(matx1[,col])<mean(matx2[,col])){
-        		temp[3,i] = 1;
-        	}
-        	else
-        	{
-        		temp[3,i] = 0;
-        	}
+            if(mean(matx1[,col])<mean(matx2[,col])){
+                temp[3,i] = 1;
+            }
+            else
+            {
+                temp[3,i] = 0;
+            }
         }
-		i= 1 + i
-	}
-	return (temp)
+        i= 1 + i
+    }
+    return (temp)
 }
+
 
 #works the same as above but range is now a ?x2 matrix. 
 #The first column contains the column numbers for matx1, the second for matx2
@@ -140,3 +141,13 @@ compareSurvey <- function(matx1,matx2,range){
     rownames(output) = rownames(matx1[range,])
     return(output)
 }
+ #How to select the numbers NOT in a vector
+ #temp = c(1,2,3,5,9)
+ #temp = c(1:20,temp)
+ #temp = Filter(function(elem) length(which(temp == elem)) <= x,temp) This returns all values that are there x times or less
+ #this would return 4,6,7,8,10-20
+ invertVector <- function(x,min,max) {
+ 	x = c(min:max,x)
+ 	x = Filter(function(elem) length(which(x == elem)) <= 1,x)
+ 	return(x)
+ }
