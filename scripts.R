@@ -5,30 +5,30 @@
 #returns a named matrix with w and p values, as well as "improvement"
 #"Improvement" is positive if matx2 mean > matx1, zero if the same, negative otherwise
 testChangeV <- function(matx1,matx2,range){
-    temp = matrix (nrow = 3, ncol = length(range))
+    result = matrix (nrow = 3, ncol = length(range))
     i = 1
-    dimnames(temp) = list(c("W", "p","improvement"), colnames(matx1[,range]))
+    dimnames(result) = list(c("W", "p","improvement"), colnames(matx1[,range]))
     for(col in range){
         output = wilcox.test(matx1[,col], matx2[,col])
-        temp[1,i] = output$statistic
-        temp[2,i] = output$p.value
-        temp[3,i] = .05<output$p.value
+        result[1,i] = output$statistic
+        result[2,i] = output$p.value
+        result[3,i] = .05<output$p.value
         if(mean(matx1[,col])>mean(matx2[,col])){
-            temp[3,i] = -1;
+            result[3,i] = -1;
         }
         else
         {
             if(mean(matx1[,col])<mean(matx2[,col])){
-                temp[3,i] = 1;
+                result[3,i] = 1;
             }
             else
             {
-                temp[3,i] = 0;
+                result[3,i] = 0;
             }
         }
         i= 1 + i
     }
-    return (temp)
+    return (result)
 }
 
 
@@ -37,27 +37,24 @@ testChangeV <- function(matx1,matx2,range){
 #This is so one can have columns that don't line up between datasets
 #Dsets should be numeric matrices
 testChangeM <- function(matx1,matx2,range){
-    temp = matrix (nrow = 3, ncol = length(range[,1]))
-    dimnames(temp) = list(c("W", "p","improvement"), colnames(matx1[range[,1]]))
+	#the output matrix
+    result = matrix (nrow = 3, ncol = length(range[,1]))
+    dimnames(result) = list(c("W", "p","improvement"), colnames(matx1[range[,1]]))
+    #Runs the Wilcox test for each pair of data
     for(i in 1:length(range[,1])){
         output = wilcox.test(matx1[,range[i,1]], matx2[,range[i,2]])
-        temp[1,i] = output$statistic
-        temp[2,i] = output$p.value
+        result[1,i] = output$statistic
+        result[2,i] = output$p.value
+        #Says whether tests improved or not
         if(mean(matx1[,range[i,1]])>mean(matx2[,range[i,2]])){
-        	temp[3,i] = -1;
-        }
-        else
-        {
+        	result[3,i] = -1;
+        }else{
         	if(mean(matx1[,range[i,1]])<mean(matx2[,range[i,2]])){
-        		temp[3,i] = 1;
-        	}
-        	else
-        	{
-        		temp[3,i] = 0;
-        	}
-        }
-    }
-    return (temp)
+        		result[3,i] = 1;
+        	}else{
+        		result[3,i] = 0;
+    }}}
+    return (result)
 }
 
 #For a paired t-test, if your dataset has both the before and after values, put it in as both matx1 and matx2. pair = true
@@ -65,23 +62,26 @@ testChangeM <- function(matx1,matx2,range){
 
 massTTestM <- function(matx1,matx2,range, pair = FALSE){
 	#Create output matrix
-    temp = matrix (nrow = 3, ncol = length(range[,1]))
-    dimnames(temp) = list(c("t", "p","df"), colnames(matx1[range[,1]]))
+    result = matrix (nrow = 3, ncol = length(range[,1]))
+    dimnames(result) = list(c("t", "p","df"), colnames(matx1[range[,1]]))
     #extract relavant data from test for each index
     for(i in 1:length(range[,1])){
         output = t.test(matx1[,range[i,1]], matx2[,range[i,2]], paired = pair)
-        temp[1,i] = output$statistic
-        temp[2,i] = output$p.value
-        temp[3,i] = output$parameter
+        result[1,i] = output$statistic
+        result[2,i] = output$p.value
+        result[3,i] = output$parameter
     }
-    return (temp)
+    return (result)
 }
 #Outputs matrix of tallied responses(including NA)
 tallyResponse <- function(matrix,range,numBins, label){
+	#Output matrix
     output = matrix(ncol=numBins+1)
     colnames(output) = label[1:ncol(output)]
     for(i in range){
+    	#separates data into numBins different factors
         temp = cut(matrix[,i],0:numBins)
+        #handles whether N/A got counted or not
         if(length(summary(temp)) < 6){
         	output = rbind(output, c(summary(temp),0))
         }else{
@@ -105,6 +105,7 @@ percentTally <- function(matrix,range,numBins,label){
         	temp=c(temp,0)
         }
         temptot = temp/(sum(temp) - temp[length(temp)])
+        #Removes NAs
         temptot = temptot[-(length(temptot))]
         output = rbind(output, temptot)
     }
